@@ -6,6 +6,8 @@ from motor.motor_asyncio import (
     AsyncIOMotorCollection,
 )
 
+from settings.settings import settings
+
 
 class BaseMongoDAOConnector(abc.ABC):
     """ Base abstract class for MongoDB DAO. """
@@ -138,8 +140,10 @@ class MongoDAODeleter:
 
 
 try:
-    client: AsyncIOMotorClient = MongoDAOConnector("localhost", 27017).connect()
-    # TODO env variable
+    client: AsyncIOMotorClient = MongoDAOConnector(
+        host=settings.DATABASE_HOST,
+        port=int(settings.DATABASE_PORT),
+    ).connect()
     db: AsyncIOMotorDatabase = client.test1
     db_reader, db_writer, db_updater, db_deleter = (
         MongoDAOReader(),
