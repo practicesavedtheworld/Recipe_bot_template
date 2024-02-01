@@ -5,8 +5,8 @@ from database.dao import (
     db_writer,
     db_updater,
     db_deleter,
-    client
 )
+from tests.constants import TEST_CLIENT_MONGO
 
 
 @fixture()
@@ -32,9 +32,11 @@ def deleter():
 
 @fixture(scope="function")
 def temp_collection():
-    test_db = client.testdb
+    """ Create temporary MongoDB collection. """
+
+    test_db = TEST_CLIENT_MONGO.connect().testdb
     coll = test_db["test"]
 
     yield coll
 
-    # client.drop_database(test_db)
+    TEST_CLIENT_MONGO.connect().drop_database(test_db)
