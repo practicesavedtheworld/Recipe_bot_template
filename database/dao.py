@@ -5,6 +5,7 @@ from motor.motor_asyncio import (
     AsyncIOMotorDatabase,
     AsyncIOMotorCollection,
 )
+from pymongo.results import UpdateResult
 
 from settings.settings import settings
 
@@ -98,20 +99,20 @@ class MongoDAOUpdater:
             aio_collection: AsyncIOMotorCollection,
             filter_: dict,
             update: dict,
-    ) -> None:
+    ) -> UpdateResult:
         """ Update first found one document. """
 
-        await aio_collection.update_one(filter=filter_, update=update)
+        return await aio_collection.update_one(filter=filter_, update=update)
 
     @staticmethod
     async def update_many(
             aio_collection: AsyncIOMotorCollection,
             filter_: dict,
             update: dict,
-    ) -> None:
+    ) -> UpdateResult:
         """ Update many documents. """
 
-        await aio_collection.update_many(filter=filter_, update=update)
+        return await aio_collection.update_many(filter=filter_, update=update)
 
 
 ###############################
