@@ -57,4 +57,3 @@ class TestMongoDAODeleter:
     async def test_delete_many_wrong_fmt_error(self, deleter, fake_coll):
         with pytest.raises(Exception):
             await deleter.delete_many(fake_coll, filter_={})
-
