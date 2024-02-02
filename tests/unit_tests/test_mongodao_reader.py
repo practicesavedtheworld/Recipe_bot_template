@@ -16,12 +16,11 @@ class TestMongoDAOReader:
     @pytest.mark.parametrize(
         "filter_,expected",
         [
-
             ({"recipe_name": "test"}, "test"),
             ({"recipe_name": {"d": "d"}}, {"d": "d"}),
             ({"recipe_name": "another_test"}, "another_test"),
             ({"recipe_name": {"a": None}}, {"a": None}),
-        ]
+        ],
     )
     @pytest.mark.asyncio
     async def test_find_one(self, reader, temp_collection, filter_, expected):
@@ -37,7 +36,7 @@ class TestMongoDAOReader:
             ({"recipe_name": {"d": "d"}}),
             ({"recipe_name": "another_test"}),
             ({"recipe_name": {"a": None}}),
-        ]
+        ],
     )
     @pytest.mark.asyncio
     async def test_find_many(self, reader, temp_collection, filter_):
