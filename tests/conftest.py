@@ -29,10 +29,9 @@ def deleter():
     return db_deleter
 
 
-
 @fixture(scope="function")
 def temp_collection():
-    """ Create temporary MongoDB collection. """
+    """Create temporary MongoDB collection."""
 
     test_db = TEST_CLIENT_MONGO.connect().testdb
     coll = test_db["test"]
