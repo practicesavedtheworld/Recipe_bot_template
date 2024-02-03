@@ -11,7 +11,8 @@ from pymongo.errors import BulkWriteError, ConnectionFailure
 from pymongo.results import DeleteResult, UpdateResult
 
 from exceptions.database_exceptions import DatabaseIsNotActiveException
-from exceptions.unexpected_exceptions import StoppedByUserSignalException
+from exceptions.unexpected_exceptions import StoppedByUserSignalException, \
+    UnexpectedException
 from settings.settings import settings
 from utils.logger import create_logger
 
@@ -171,3 +172,5 @@ except (ConnectionFailure, BulkWriteError) as db_connection_err:
     raise DatabaseIsNotActiveException(exc_details=db_connection_err)
 except KeyboardInterrupt as signal_err:
     raise StoppedByUserSignalException(exc_details=signal_err.__repr__())
+except Exception as unexpected_error:
+    raise UnexpectedException(exc_details=unexpected_error.__repr__())
