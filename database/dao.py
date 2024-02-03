@@ -1,29 +1,41 @@
 import abc
+import logging
+import pathlib
 
 from motor.motor_asyncio import (
     AsyncIOMotorClient,
-    AsyncIOMotorDatabase,
     AsyncIOMotorCollection,
+    AsyncIOMotorDatabase,
 )
-from pymongo.results import UpdateResult
+from pymongo.errors import BulkWriteError, ConnectionFailure
+from pymongo.results import DeleteResult, UpdateResult
 
+from exceptions.database_exceptions import DatabaseIsNotActiveException
+from exceptions.unexpected_exceptions import StoppedByUserSignalException
 from settings.settings import settings
+from utils.logger import create_logger
+
+dao_loger = create_logger(
+    loger_name="dao logger",
+    logger_level=logging.DEBUG,
+    file_info=pathlib.Path(__file__).name,
+)
 
 
 class BaseMongoDAOConnector(abc.ABC):
-    """ Base abstract class for MongoDB DAO. """
+    """Base abstract class for MongoDB DAO."""
 
     @abc.abstractmethod
     def __init__(self, host: str, port: int) -> None: ...
 
     @abc.abstractmethod
     def connect(self) -> AsyncIOMotorClient:
-        """ Connect to MongoDB. """
+        """Connect to MongoDB."""
         ...
 
 
 class MongoDAOConnector(BaseMongoDAOConnector):
-    """ Class for MongoDB DAO. """
+    """Class for MongoDB DAO."""
 
     def __init__(self, host: str, port: int) -> None:
         self._host = host
@@ -37,24 +49,24 @@ class MongoDAOConnector(BaseMongoDAOConnector):
 ##          READER           ##
 ###############################
 class MongoDAOReader:
-    """ Interface reader for MongoDB DAO. """
+    """Interface reader for MongoDB DAO."""
 
     @staticmethod
     async def find_one(
-            aio_collection: AsyncIOMotorCollection,
-            filter_: dict | None = None,
+        aio_collection: AsyncIOMotorCollection,
+        filter_: dict | None = None,
     ) -> dict | None:
-        """ Find one document. """
+        """Find one document."""
 
         document = await aio_collection.find_one(filter=filter_)
         return document
 
     @staticmethod
     async def find_many(
-            aio_collection: AsyncIOMotorCollection,
-            filter_: dict | None = None
+        aio_collection: AsyncIOMotorCollection,
+        filter_: dict | None = None,
     ) -> list[dict]:
-        """ Find many documents. """
+        """Find many documents."""
 
         cursor = aio_collection.find(filter=filter_)
         res = []
@@ -67,23 +79,23 @@ class MongoDAOReader:
 ##          WRITER           ##
 ###############################
 class MongoDAOWriter:
-    """ Interface writer for MongoDB DAO. """
+    """Interface writer for MongoDB DAO."""
 
     @staticmethod
     async def insert_one(
-            aio_collection: AsyncIOMotorCollection,
-            document: dict,
+        aio_collection: AsyncIOMotorCollection,
+        document: dict,
     ) -> None:
-        """ Insert one document. """
+        """Insert one document."""
 
         await aio_collection.insert_one(document)
 
     @staticmethod
     async def insert_many(
-            aio_collection: AsyncIOMotorCollection,
-            documents: list[dict],
+        aio_collection: AsyncIOMotorCollection,
+        documents: list[dict],
     ) -> None:
-        """ Insert many documents. """
+        """Insert many documents."""
 
         await aio_collection.insert_many(documents)
 
@@ -92,25 +104,25 @@ class MongoDAOWriter:
 ##         UPDATER           ##
 ###############################
 class MongoDAOUpdater:
-    """ Interface updater for MongoDB DAO. """
+    """Interface updater for MongoDB DAO."""
 
     @staticmethod
     async def update_one(
-            aio_collection: AsyncIOMotorCollection,
-            filter_: dict,
-            update: dict,
+        aio_collection: AsyncIOMotorCollection,
+        filter_: dict,
+        update: dict,
     ) -> UpdateResult:
-        """ Update first found one document. """
+        """Update first found one document."""
 
         return await aio_collection.update_one(filter=filter_, update=update)
 
     @staticmethod
     async def update_many(
-            aio_collection: AsyncIOMotorCollection,
-            filter_: dict,
-            update: dict,
+        aio_collection: AsyncIOMotorCollection,
+        filter_: dict,
+        update: dict,
     ) -> UpdateResult:
-        """ Update many documents. """
+        """Update many documents."""
 
         return await aio_collection.update_many(filter=filter_, update=update)
 
@@ -119,25 +131,25 @@ class MongoDAOUpdater:
 ##          DELETER          ##
 ###############################
 class MongoDAODeleter:
-    """ Interface deleter for MongoDB DAO. """
+    """Interface deleter for MongoDB DAO."""
 
     @staticmethod
     async def delete_one(
-            aio_collection: AsyncIOMotorCollection,
-            filter_: dict,
-    ) -> None:
-        """ Immediately removes the first returned matching document."""
+        aio_collection: AsyncIOMotorCollection,
+        filter_: dict,
+    ) -> DeleteResult:
+        """Immediately removes the first returned matching document."""
 
-        await aio_collection.delete_one(filter_)
+        return await aio_collection.delete_one(filter_)
 
     @staticmethod
     async def delete_many(
-            aio_collection: AsyncIOMotorCollection,
-            filter_: dict,
-    ) -> None:
-        """ Delete multiple documents. Immediately removes all matching documents."""
+        aio_collection: AsyncIOMotorCollection,
+        filter_: dict,
+    ) -> DeleteResult:
+        """Delete multiple documents. Immediately removes all matching documents."""
 
-        await aio_collection.delete_many(filter_)
+        return await aio_collection.delete_many(filter_)
 
 
 try:
@@ -154,6 +166,8 @@ try:
     )
     recipes_collection = db["recipes"]
 
-except:
-    # TODO exception
-    print("MongoDB not available. Skipping tests.")
+except (ConnectionFailure, BulkWriteError) as db_connection_err:
+    dao_loger.debug("MongoDB not available. Skipping tests.")
+    raise DatabaseIsNotActiveException(exc_details=db_connection_err)
+except KeyboardInterrupt as signal_err:
+    raise StoppedByUserSignalException(exc_details=signal_err.__repr__())
