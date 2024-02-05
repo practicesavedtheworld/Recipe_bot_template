@@ -40,7 +40,7 @@ class Settings(BaseSettings):
 
 
 try:
-    settings = Settings()
+    settings = Settings()  # type: ignore[call-arg]
     settings_logger.debug("Settings loaded successfully!")
 except ValidationError as validation_error:
     settings_logger.debug(
