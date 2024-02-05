@@ -1,11 +1,6 @@
 from pytest import fixture
 
-from database.dao import (
-    db_reader,
-    db_writer,
-    db_updater,
-    db_deleter,
-)
+from database.dao import db_deleter, db_reader, db_updater, db_writer
 from tests.constants import TEST_CLIENT_MONGO
 
 
