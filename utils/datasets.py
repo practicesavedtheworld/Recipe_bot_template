@@ -32,7 +32,7 @@ def get_recipes_from_txt() -> list[Recipe]:
             name, ingredients, method = dish[0], dish[1], dish[2]
 
             for idx, el in enumerate([name, ingredients, method]):
-                el = el.split("\n")[1:]
+                el = el.split("\n")[1:]  # type: ignore
                 full_elem = "\n".join(
                     [elem.strip() for elem in el if not elem.startswith("Наз")]
                 )
