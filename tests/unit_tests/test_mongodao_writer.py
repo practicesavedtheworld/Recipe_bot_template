@@ -1,4 +1,5 @@
 import pytest
+
 from tests.constants import MONGO_TEST_DOCUMENT
 
 

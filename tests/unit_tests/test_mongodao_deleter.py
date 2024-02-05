@@ -1,6 +1,6 @@
 import pytest
 
-from tests.constants import MONGO_TEST_DOCUMENT, FAKE_COLLECTION
+from tests.constants import FAKE_COLLECTION, MONGO_TEST_DOCUMENT
 
 
 class TestMongoDAODeleter:
