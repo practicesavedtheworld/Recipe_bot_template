@@ -51,4 +51,3 @@ class Recipe(RecipeAbc):
         if isinstance(item, Ingredient):
             return item in self._ingredients
         return False
-
