@@ -1,18 +1,22 @@
+from __future__ import annotations
+
 import abc
 import logging
 import pathlib
+from typing import TYPE_CHECKING
 
-from motor.motor_asyncio import (
-    AsyncIOMotorClient,
-    AsyncIOMotorCollection,
-    AsyncIOMotorDatabase,
-)
+if TYPE_CHECKING:
+    from motor.core import AgnosticClient, AgnosticDatabase, AgnosticCollection
+
+from motor.motor_asyncio import AsyncIOMotorClient
 from pymongo.errors import BulkWriteError, ConnectionFailure
 from pymongo.results import DeleteResult, UpdateResult
 
 from exceptions.database_exceptions import DatabaseIsNotActiveException
-from exceptions.unexpected_exceptions import StoppedByUserSignalException, \
-    UnexpectedException
+from exceptions.unexpected_exceptions import (
+    StoppedByUserSignalException,
+    UnexpectedException,
+)
 from settings.settings import settings
 from utils.logger import create_logger
 
@@ -30,7 +34,7 @@ class BaseMongoDAOConnector(abc.ABC):
     def __init__(self, host: str, port: int) -> None: ...
 
     @abc.abstractmethod
-    def connect(self) -> AsyncIOMotorClient:
+    def connect(self) -> AgnosticClient:
         """Connect to MongoDB."""
         ...
 
@@ -42,7 +46,7 @@ class MongoDAOConnector(BaseMongoDAOConnector):
         self._host = host
         self._port = port
 
-    def connect(self) -> AsyncIOMotorClient:
+    def connect(self) -> AgnosticClient:
         return AsyncIOMotorClient(self._host, self._port)
 
 
@@ -54,7 +58,7 @@ class MongoDAOReader:
 
     @staticmethod
     async def find_one(
-        aio_collection: AsyncIOMotorCollection,
+        aio_collection: AgnosticCollection,
         filter_: dict | None = None,
     ) -> dict | None:
         """Find one document."""
@@ -64,7 +68,7 @@ class MongoDAOReader:
 
     @staticmethod
     async def find_many(
-        aio_collection: AsyncIOMotorCollection,
+        aio_collection: AgnosticCollection,
         filter_: dict | None = None,
     ) -> list[dict]:
         """Find many documents."""
@@ -84,7 +88,7 @@ class MongoDAOWriter:
 
     @staticmethod
     async def insert_one(
-        aio_collection: AsyncIOMotorCollection,
+        aio_collection: AgnosticCollection,
         document: dict,
     ) -> None:
         """Insert one document."""
@@ -93,7 +97,7 @@ class MongoDAOWriter:
 
     @staticmethod
     async def insert_many(
-        aio_collection: AsyncIOMotorCollection,
+        aio_collection: AgnosticCollection,
         documents: list[dict],
     ) -> None:
         """Insert many documents."""
@@ -109,7 +113,7 @@ class MongoDAOUpdater:
 
     @staticmethod
     async def update_one(
-        aio_collection: AsyncIOMotorCollection,
+        aio_collection: AgnosticCollection,
         filter_: dict,
         update: dict,
     ) -> UpdateResult:
@@ -119,7 +123,7 @@ class MongoDAOUpdater:
 
     @staticmethod
     async def update_many(
-        aio_collection: AsyncIOMotorCollection,
+        aio_collection: AgnosticCollection,
         filter_: dict,
         update: dict,
     ) -> UpdateResult:
@@ -136,7 +140,7 @@ class MongoDAODeleter:
 
     @staticmethod
     async def delete_one(
-        aio_collection: AsyncIOMotorCollection,
+        aio_collection: AgnosticCollection,
         filter_: dict,
     ) -> DeleteResult:
         """Immediately removes the first returned matching document."""
@@ -145,7 +149,7 @@ class MongoDAODeleter:
 
     @staticmethod
     async def delete_many(
-        aio_collection: AsyncIOMotorCollection,
+        aio_collection: AgnosticCollection,
         filter_: dict,
     ) -> DeleteResult:
         """Delete multiple documents. Immediately removes all matching documents."""
@@ -154,11 +158,11 @@ class MongoDAODeleter:
 
 
 try:
-    client: AsyncIOMotorClient = MongoDAOConnector(
+    client: AgnosticClient = MongoDAOConnector(
         host=settings.DATABASE_HOST,
         port=int(settings.DATABASE_PORT),
     ).connect()
-    db: AsyncIOMotorDatabase = client.test1
+    db: AgnosticDatabase = client.test1
     db_reader, db_writer, db_updater, db_deleter = (
         MongoDAOReader(),
         MongoDAOWriter(),
@@ -169,7 +173,7 @@ try:
 
 except (ConnectionFailure, BulkWriteError) as db_connection_err:
     dao_loger.debug("MongoDB not available. Skipping tests.")
-    raise DatabaseIsNotActiveException(exc_details=db_connection_err)
+    raise DatabaseIsNotActiveException(exc_details=db_connection_err.__repr__())
 except KeyboardInterrupt as signal_err:
     raise StoppedByUserSignalException(exc_details=signal_err.__repr__())
 except Exception as unexpected_error:
