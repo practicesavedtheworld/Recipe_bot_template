@@ -12,7 +12,7 @@ try:
     ]
     PROJECT_ROOT: Path = Path(__file__).parent.parent
     try:
-        DEFAULT_RECIPE_IMAGE = f"{PROJECT_ROOT}/static/images/def.png"
+        DEFAULT_RECIPE_IMAGE_PATH = f"{PROJECT_ROOT}/static/images/def.png"
     except FileNotFoundError:
         # TODO exception + logging
         print("FILE NOT FOUND")
