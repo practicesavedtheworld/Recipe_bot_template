@@ -4,8 +4,8 @@ import pathlib
 from pydantic import ValidationError
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
-from exceptions.settings_exceptions import FailedLoadSettingsException
-from exceptions.unexpected_exceptions import (
+from bot.exceptions.settings_exceptions import FailedLoadSettingsException
+from bot.exceptions.unexpected_exceptions import (
     StoppedByUserSignalException,
     UnexpectedException,
 )

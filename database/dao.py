@@ -5,6 +5,12 @@ import logging
 import pathlib
 from typing import TYPE_CHECKING
 
+from bot.exceptions.database_exceptions import DatabaseIsNotActiveException
+from bot.exceptions.unexpected_exceptions import (
+    StoppedByUserSignalException,
+    UnexpectedException,
+)
+
 if TYPE_CHECKING:
     from motor.core import AgnosticClient, AgnosticDatabase, AgnosticCollection
 
@@ -12,11 +18,6 @@ from motor.motor_asyncio import AsyncIOMotorClient
 from pymongo.errors import BulkWriteError, ConnectionFailure
 from pymongo.results import DeleteResult, UpdateResult
 
-from exceptions.database_exceptions import DatabaseIsNotActiveException
-from exceptions.unexpected_exceptions import (
-    StoppedByUserSignalException,
-    UnexpectedException,
-)
 from settings.settings import settings
 from utils.logger import create_logger
 
