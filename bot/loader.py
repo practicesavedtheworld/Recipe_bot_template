@@ -5,8 +5,8 @@ from aiogram import Bot, Dispatcher
 from aiogram.enums import ParseMode
 from aiogram.utils.token import TokenValidationError
 
-from exceptions.bot_exceptions import FailedLoadBotException
-from exceptions.unexpected_exceptions import (
+from bot.exceptions.bot_exceptions import FailedLoadBotException
+from bot.exceptions.unexpected_exceptions import (
     StoppedByUserSignalException,
     UnexpectedException,
 )
