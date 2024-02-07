@@ -15,7 +15,7 @@ router = Router()
 
 @router.message(Command("recipes"))
 async def recipes(message: types.Message):
-    """ Shows all recipes available."""
+    """Shows all recipes available."""
     recipe_kb = InlineKeyboardBuilder()
 
     rec = await db_reader.find_many(aio_collection=recipes_collection)
@@ -74,4 +74,3 @@ async def add_recipe(message: types.Message) -> None:
         text="This feature is coming soon. Check back later.",
     )
     pass
-
