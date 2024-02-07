@@ -1,4 +1,5 @@
 import logging
+import os
 import pathlib
 
 from pydantic import ValidationError
@@ -17,6 +18,7 @@ settings_logger = create_logger(
     logger_level=logging.DEBUG,
     file_info=pathlib.Path(__file__).name,
 )
+SPLITTER = "/" if os.name == "posix" else "\\"
 
 
 class Settings(BaseSettings):
@@ -34,7 +36,10 @@ class Settings(BaseSettings):
     # .env file has priority over .fake.env. So the first .env file will be used
     # if it exists, otherwise used .fake.env
     model_config = SettingsConfigDict(
-        env_file=[f"{PROJECT_ROOT}/.fake.env", f"{PROJECT_ROOT}/.env"],
+        env_file=[
+            f"{PROJECT_ROOT}{SPLITTER}.fake.env",
+            f"{PROJECT_ROOT}{SPLITTER}.env",
+        ],
         env_file_encoding="UTF-8",
     )
 
