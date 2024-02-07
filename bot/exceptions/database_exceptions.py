@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-from exceptions.base import BaseRecipeBotException
+from bot.exceptions.base import BaseRecipeBotException
 
 
 @dataclass
