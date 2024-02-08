@@ -8,5 +8,7 @@ RUN mkdir /recipe_bot
 COPY . /recipe_bot
 WORKDIR /recipe_bot
 
+RUN chmod 777 entry.sh
+
 # Through makefile
-CMD make run_as_script
+CMD sh entry.sh
