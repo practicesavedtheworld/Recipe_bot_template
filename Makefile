@@ -6,11 +6,9 @@ OS:=$(shell uname -s)
 # Create venv
 venv_init:
 ifeq ($(OS),Windows)
-	@python3 -m venv venv && \
-	. \venv\Scripts\activate;
+	$(shell python3 -m venv venv && . \venv\Scripts\activate)
 else
-	@python3 -m venv venv && \
-	source venv/bin/activate;
+	$(shell python3 -m venv venv && source venv/bin/activate)
 endif
 
 # Remove venv
@@ -25,7 +23,6 @@ install: venv_init
 install_poetry:
 	@poetry update && \
 	poetry install
-
 
 tests: install
 	pytest tests/ -v
