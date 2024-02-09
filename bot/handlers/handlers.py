@@ -36,7 +36,7 @@ async def recipes(message: types.Message):
 
 @router.callback_query(lambda c: c.data.startswith("found_recipe:"))
 async def found_recipe(query: types.CallbackQuery):
-    recipe_id = query.data[query.data.find(":") + 1 :]
+    recipe_id = query.data[query.data.find(":") + 1 :]  # type: ignore
     rec = await db_reader.find_one(
         aio_collection=recipes_collection, filter_={"_id": ObjectId(recipe_id)}
     )
@@ -55,7 +55,8 @@ async def cmd_start(message: types.Message) -> None:
 
     await message.answer(
         hbold(
-            f"hi {message.from_user.full_name}. Type /recipes to see available recipes."
+            f"hi {message.from_user.full_name}. "  # type: ignore
+            f"Type /recipes to see available recipes."
         )
     )
 
@@ -74,7 +75,7 @@ async def add_recipe(message: types.Message) -> None:
     """
 
     await bot.send_message(
-        chat_id=message.from_user.id,
+        chat_id=message.from_user.id,  # type: ignore
         text="This feature is coming soon. Check back later.",
     )
     pass
