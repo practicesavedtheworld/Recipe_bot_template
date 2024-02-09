@@ -53,7 +53,11 @@ async def found_recipe(query: types.CallbackQuery):
 async def cmd_start(message: types.Message) -> None:
     """Greeting message when user starts bot."""
 
-    await message.answer(hbold(f"hi {message.from_user.full_name}"))
+    await message.answer(
+        hbold(
+            f"hi {message.from_user.full_name}. Type /recipes to see available recipes."
+        )
+    )
 
 
 ################################################
