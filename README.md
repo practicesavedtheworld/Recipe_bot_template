@@ -13,7 +13,7 @@ This template can be integrated with your bot to handle queries and provide reci
 -------
 ## Require
 
--------
+##
 
 `make` tool
 
@@ -21,10 +21,10 @@ This template can be integrated with your bot to handle queries and provide reci
 
 `docker compose >= 2.24`
 
----
+##
 ## Run as container
 
----
+##
 Make sure your env file contain correct hostname for connection to the database.
 If you familiar with docker you can change host/port whenever you want
 
@@ -48,11 +48,11 @@ start command:
    ```
 
 
----
+##
 
 ## Run as python script
 
----
+##
 
 It requires python v3.12.
 1) ```
@@ -89,11 +89,11 @@ make default_recipes
 make default_recipes_poetry
 ```
 
----
+##
 
 ## Run tests
 
----
+##
 
 1) ```
    git clone https://github.com/practicesavedtheworld/Recipe_bot_template.git
