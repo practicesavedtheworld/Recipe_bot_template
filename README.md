@@ -4,8 +4,12 @@ Template for recipe based tg bots. Integrate it with your food/recipe bot as a b
 
 -------
 ## What is this?
+
+
 The recipe based Telegram Bot Template, a bot that provides food recipes or ingredients for cooking to users.
 This template can be integrated with your bot to handle queries and provide recipe information.
+
+
 -------
 ## Require
 
