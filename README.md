@@ -19,6 +19,8 @@ This template can be integrated with your bot to handle queries and provide reci
 
 `docker compose >= 2.24`
 
+`mongodb >= 6` if run through make ssystem
+
 ##
 ## Run as container
 
